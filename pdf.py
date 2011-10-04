@@ -10,7 +10,9 @@ import os
 # multipage symbol compression.
 # Run ./jbig2 -s -p <other options> image1.jpeg image1.jpeg ...
 # python pdf.py output > out.pdf
+# pdf.py code patched by rubypdf  - http://soft.rubypdf.com/download/jbig2/pdf.pys
 
+dpi = 72
 
 class Ref:
   def __init__(self, x):
@@ -121,6 +123,12 @@ def main(symboltable='symboltable', pagefiles=glob.glob('page-*')):
       sys.stderr.write("error reading page file %s\n"% p)
       continue
     (width, height,xres,yres) = struct.unpack('>IIII', contents[11:27])
+    
+    if xres==0:
+      xres=dpi    	
+    if yres==0:
+    	yres=dpi
+    	
     xobj = Obj({'Type': '/XObject', 'Subtype': '/Image', 'Width':
         str(width), 'Height': str(height), 'ColorSpace': '/DeviceGray',
         'BitsPerComponent': '1', 'Filter': '/JBIG2Decode', 'DecodeParms':
